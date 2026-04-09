@@ -1,39 +1,30 @@
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        System.out.println("--- UC5: Preserve Insertion Order (LinkedHashSet) ---");
+        System.out.println("--- UC6: Map Bogie to Capacity (HashMap) ---");
 
-        // Requirement: Create a LinkedHashSet to represent the train formation
-        Set<String> trainFormation = new LinkedHashSet<>();
+        // Requirement: Create a HashMap<String, Integer> for bogie-capacity info
+        Map<String, Integer> bogieCapacityMap = new HashMap<>();
 
-        // Requirement: Attach initial bogies
-        trainFormation.add("Engine");
-        trainFormation.add("Sleeper");
-        trainFormation.add("Cargo");
-        trainFormation.add("Guard");
+        // Requirement: Use put() to map bogies to their capacities
+        bogieCapacityMap.put("Sleeper", 72);
+        bogieCapacityMap.put("AC Chair Car", 56);
+        bogieCapacityMap.put("First Class", 24);
+        bogieCapacityMap.put("General", 90);
 
-        System.out.println("Current Formation: " + trainFormation);
+        // Requirement: Iterate over the map using entrySet()
+        System.out.println("Bogie Capacity Details:");
+        System.out.println("----------------------------");
 
-        // Requirement: Attempt to attach a duplicate bogie intentionally
-        System.out.println("\nAttempting to re-attach: Sleeper...");
-        boolean isAdded = trainFormation.add("Sleeper");
-
-        if (!isAdded) {
-            System.out.println("Action Ignored: Sleeper is already part of the formation.");
+        for (Map.Entry<String, Integer> entry : bogieCapacityMap.entrySet()) {
+            // Requirement: Display each bogie along with its corresponding capacity
+            System.out.println("Bogie Type: " + entry.getKey() + " | Capacity: " + entry.getValue() + " seats");
         }
 
-        // Requirement: Display the final formation order
-        // Requirement: Ensure duplicates do not appear
-        System.out.println("\nFinal Train Formation (Unique & Ordered):");
-        System.out.println(trainFormation);
-
-        // Demonstrating Ordered Iteration
-        System.out.print("Physical Sequence: ");
-        for (String bogie : trainFormation) {
-            System.out.print("[" + bogie + "] -> ");
-        }
-        System.out.println("END");
+        // Key Benefit: Fast Lookup
+        String searchType = "AC Chair Car";
+        System.out.println("\nFast Lookup for [" + searchType + "]: " + bogieCapacityMap.get(searchType) + " seats");
     }
 }
