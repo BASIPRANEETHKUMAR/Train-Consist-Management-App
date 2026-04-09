@@ -1,80 +1,37 @@
-import java.util.LinkedList;
-import java.util.Scanner;
+import java.util.HashSet;
+import java.util.Set;
 
-// Model class representing a single Coach
-class Coach {
-    private String id;
-    private String type; // e.g., AC, Sleeper, Pantry
-
-    public Coach(String id, String type) {
-        this.id = id;
-        this.type = type;
-    }
-
-    public String getId() { return id; }
-
-    @Override
-    public String toString() {
-        return "[" + id + " | " + type + "]";
-    }
-}
-
-// Manager class handling the Train Consist logic
-class TrainConsistManager {
-    // We use LinkedList for O(1) insertions at head/tail and efficient reordering
-    private LinkedList<Coach> consist = new LinkedList<>();
-
-    // Logic: Prevention of duplication (Validation)
-    public boolean addCoach(String id, String type) {
-        for (Coach c : consist) {
-            if (c.getId().equalsIgnoreCase(id)) {
-                System.out.println("Error: Coach ID " + id + " already exists in the consist.");
-                return false;
-            }
-        }
-        consist.add(new Coach(id, type));
-        return true;
-    }
-
-    public void displayConsist() {
-        if (consist.isEmpty()) {
-            System.out.println("The train consist is currently empty.");
-        } else {
-            System.out.print("Engine <-> ");
-            for (Coach c : consist) {
-                System.out.print(c + " <-> ");
-            }
-            System.out.println("End");
-        }
-    }
-
-    public void removeLastCoach() {
-        if (!consist.isEmpty()) {
-            Coach removed = consist.removeLast();
-            System.out.println("Removed: " + removed);
-        }
-    }
-}
-
-public class TrainApp {
+public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        TrainConsistManager manager = new TrainConsistManager();
-        Scanner sc = new Scanner(System.in);
+        // UC1 & UC2 logic consolidated into UC3
+        System.out.println("--- Train Bogie Tracker (Unique IDs) ---");
 
-        System.out.println("--- Train Consist Management System ---");
+        // Key Concept: Set Interface & HashSet Implementation
+        Set<String> bogieIds = new HashSet<>();
 
-        // Simulating incremental operational additions
-        manager.addCoach("A1", "AC First Class");
-        manager.addCoach("B1", "Sleeper");
-        manager.addCoach("P1", "Pantry Car");
+        // Flow: User adds bogie IDs
+        addBogie(bogieIds, "B1");
+        addBogie(bogieIds, "A1");
+        addBogie(bogieIds, "B2");
 
-        manager.displayConsist();
+        // Flow: Duplicates are ignored
+        System.out.println("\nAttempting to add duplicate Bogie ID: B1...");
+        addBogie(bogieIds, "B1");
 
-        // Demonstrating validation logic (Duplicate ID)
-        System.out.println("\nAttempting to add duplicate coach (A1)...");
-        manager.addCoach("A1", "AC Second Class");
+        // Flow: Unique IDs are displayed
+        System.out.println("\nFinal Unique Bogie List:");
+        System.out.println(bogieIds);
+        System.out.println("Total Unique Bogies: " + bogieIds.size());
+    }
 
-        System.out.println("\nFinal Train Configuration:");
-        manager.displayConsist();
+    /**
+     * Helper method to demonstrate 'add()' and 'Automatic Deduplication'
+     */
+    private static void addBogie(Set<String> set, String id) {
+        if (set.add(id)) {
+            System.out.println("Successfully added Bogie: " + id);
+        } else {
+            System.out.println("Rejected: Bogie ID " + id + " already exists!");
+        }
     }
 }
