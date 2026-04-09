@@ -1,51 +1,59 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-class Bogie {
-    String id;
-    int capacity;
+// Requirement: Create a custom exception class InvalidCapacityException
+class InvalidCapacityException extends Exception {
+    public InvalidCapacityException(String message) {
+        super(message);
+    }
+}
 
-    public Bogie(String id, int capacity) {
+class PassengerBogie {
+    private String id;
+    private int capacity;
+
+    // Requirement: Validate capacity inside the constructor
+    // Requirement: Declare the constructor with throws InvalidCapacityException
+    public PassengerBogie(String id, int capacity) throws InvalidCapacityException {
+        if (capacity <= 0) {
+            // Requirement: Throw the exception when capacity is <= 0
+            throw new InvalidCapacityException("Invalid Capacity: " + capacity +
+                    ". Bogie " + id + " must have a positive seating capacity.");
+        }
         this.id = id;
         this.capacity = capacity;
+    }
+
+    @Override
+    public String toString() {
+        return "Bogie[" + id + " | Capacity: " + capacity + "]";
     }
 }
 
 public class Main {
     public static void main(String[] args) {
-        // 1. Requirement: Create a collection of bogies for testing
-        List<Bogie> largeConsist = new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
-            largeConsist.add(new Bogie("B-" + i, (int) (Math.random() * 100)));
+        System.out.println("--- UC14: Custom Exception Handling ---");
+        List<PassengerBogie> trainConsist = new ArrayList<>();
+
+        // Test Case 1: Valid Bogie
+        try {
+            PassengerBogie b1 = new PassengerBogie("S1", 72);
+            trainConsist.add(b1);
+            System.out.println("Successfully added: " + b1);
+        } catch (InvalidCapacityException e) {
+            System.err.println(e.getMessage());
         }
 
-        System.out.println("--- UC13: Performance Comparison (Loops vs Streams) ---");
-
-        // --- LOOP BASED PROCESSING ---
-        long startLoop = System.nanoTime(); // Requirement: Capture start time
-        List<Bogie> filteredLoop = new ArrayList<>();
-        for (Bogie b : largeConsist) {
-            if (b.capacity > 50) {
-                filteredLoop.add(b);
-            }
+        // Test Case 2: Invalid Bogie (Zero Capacity)
+        // Requirement: Ensure invalid bogies are never added to the consist
+        try {
+            System.out.println("\nAttempting to add invalid bogie (Capacity 0)...");
+            PassengerBogie b2 = new PassengerBogie("S2", 0);
+            trainConsist.add(b2);
+        } catch (InvalidCapacityException e) {
+            System.out.println("Validation Failed: " + e.getMessage());
         }
-        long endLoop = System.nanoTime(); // Requirement: Capture end time
-        long loopDuration = endLoop - startLoop;
 
-        // --- STREAM BASED PROCESSING ---
-        long startStream = System.nanoTime();
-        List<Bogie> filteredStream = largeConsist.stream()
-                .filter(b -> b.capacity > 50)
-                .collect(Collectors.toList());
-        long endStream = System.nanoTime();
-        long streamDuration = endStream - startStream;
-
-        // 2. Requirement: Print the execution duration
-        System.out.println("Loop Processing Time   : " + loopDuration + " ns");
-        System.out.println("Stream Processing Time : " + streamDuration + " ns");
-
-        double difference = (double) (streamDuration - loopDuration) / loopDuration * 100;
-        System.out.printf("Difference: Streams are %.2f%% slower/faster in this micro-benchmark.\n", difference);
+        System.out.println("\nFinal Valid Train Consist: " + trainConsist);
     }
 }
