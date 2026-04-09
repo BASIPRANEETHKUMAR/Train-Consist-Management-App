@@ -1,45 +1,39 @@
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        System.out.println("--- UC4: Maintain Ordered Bogie IDs ---");
+        System.out.println("--- UC5: Preserve Insertion Order (LinkedHashSet) ---");
 
-        // Requirement: Create a LinkedList for the consist
-        LinkedList<String> consist = new LinkedList<>();
+        // Requirement: Create a LinkedHashSet to represent the train formation
+        Set<String> trainFormation = new LinkedHashSet<>();
 
-        // Requirement: Add initial bogies
-        // Using addLast() to ensure they follow the sequence: Engine -> Sleeper -> ...
-        consist.add("Engine");
-        consist.add("Sleeper");
-        consist.add("AC");
-        consist.add("Cargo");
-        consist.add("Guard");
+        // Requirement: Attach initial bogies
+        trainFormation.add("Engine");
+        trainFormation.add("Sleeper");
+        trainFormation.add("Cargo");
+        trainFormation.add("Guard");
 
-        System.out.println("Initial Consist: " + consist);
+        System.out.println("Current Formation: " + trainFormation);
 
-        // Requirement: Insert a Pantry Car at position 2 (Index 2)
-        // LinkedList makes this efficient by re-linking nodes
-        consist.add(2, "Pantry Car");
-        System.out.println("After Adding Pantry Car: " + consist);
+        // Requirement: Attempt to attach a duplicate bogie intentionally
+        System.out.println("\nAttempting to re-attach: Sleeper...");
+        boolean isAdded = trainFormation.add("Sleeper");
 
-        // Requirement: Remove the first and last bogie
-        String removedFirst = consist.removeFirst();
-        String removedLast = consist.removeLast();
-
-        System.out.println("\nDetached Head: " + removedFirst);
-        System.out.println("Detached Tail: " + removedLast);
-
-        // Requirement: Display the final ordered train consist
-        System.out.println("\nFinal Ordered Train Consist:");
-        displayTrain(consist);
-    }
-
-    private static void displayTrain(LinkedList<String> list) {
-        System.out.print("TRACK: ");
-        for (int i = 0; i < list.size(); i++) {
-            System.out.print("[" + list.get(i) + "]");
-            if (i < list.size() - 1) System.out.print(" <-> ");
+        if (!isAdded) {
+            System.out.println("Action Ignored: Sleeper is already part of the formation.");
         }
-        System.out.println();
+
+        // Requirement: Display the final formation order
+        // Requirement: Ensure duplicates do not appear
+        System.out.println("\nFinal Train Formation (Unique & Ordered):");
+        System.out.println(trainFormation);
+
+        // Demonstrating Ordered Iteration
+        System.out.print("Physical Sequence: ");
+        for (String bogie : trainFormation) {
+            System.out.print("[" + bogie + "] -> ");
+        }
+        System.out.println("END");
     }
 }
