@@ -1,50 +1,51 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-class GoodsBogie {
+class Bogie {
     String id;
-    String shape; // e.g., "Cylindrical", "Box", "Flatbed"
-    String cargo; // e.g., "Petroleum", "Grains", "Steel"
+    int capacity;
 
-    public GoodsBogie(String id, String shape, String cargo) {
+    public Bogie(String id, int capacity) {
         this.id = id;
-        this.shape = shape;
-        this.cargo = cargo;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("[%s | %s | %s]", id, shape, cargo);
+        this.capacity = capacity;
     }
 }
 
-public class TrainConsistManagementApp {
+public class Main {
     public static void main(String[] args) {
-        System.out.println("--- UC12: Safety Compliance Check ---");
-
-        // 1. Requirement: Create a collection of goods bogies
-        List<GoodsBogie> goodsTrain = new ArrayList<>();
-        goodsTrain.add(new GoodsBogie("G1", "Cylindrical", "Petroleum"));
-        goodsTrain.add(new GoodsBogie("G2", "Box", "Grains"));
-        goodsTrain.add(new GoodsBogie("G3", "Cylindrical", "Petroleum"));
-        // goodsTrain.add(new GoodsBogie("G4", "Cylindrical", "Explosives")); // Uncomment to test failure
-
-        // 2. Requirement: Use stream() and allMatch() for validation
-        // 3. Requirement: Apply logic (Cylindrical -> only Petroleum allowed)
-        boolean isSafe = goodsTrain.stream().allMatch(bogie -> {
-            if (bogie.shape.equalsIgnoreCase("Cylindrical")) {
-                return bogie.cargo.equalsIgnoreCase("Petroleum");
-            }
-            return true; // Other shapes are considered safe for this check
-        });
-
-        // 4. Requirement: Store result and display compliance status
-        System.out.println("Checking Train Formation: " + goodsTrain);
-
-        if (isSafe) {
-            System.out.println("\nSTATUS: ✔ Safety Compliant. The train is cleared for departure.");
-        } else {
-            System.out.println("\nSTATUS: ✘ SAFETY VIOLATION! Illegal cargo detected in cylindrical bogie.");
+        // 1. Requirement: Create a collection of bogies for testing
+        List<Bogie> largeConsist = new ArrayList<>();
+        for (int i = 0; i < 10000; i++) {
+            largeConsist.add(new Bogie("B-" + i, (int) (Math.random() * 100)));
         }
+
+        System.out.println("--- UC13: Performance Comparison (Loops vs Streams) ---");
+
+        // --- LOOP BASED PROCESSING ---
+        long startLoop = System.nanoTime(); // Requirement: Capture start time
+        List<Bogie> filteredLoop = new ArrayList<>();
+        for (Bogie b : largeConsist) {
+            if (b.capacity > 50) {
+                filteredLoop.add(b);
+            }
+        }
+        long endLoop = System.nanoTime(); // Requirement: Capture end time
+        long loopDuration = endLoop - startLoop;
+
+        // --- STREAM BASED PROCESSING ---
+        long startStream = System.nanoTime();
+        List<Bogie> filteredStream = largeConsist.stream()
+                .filter(b -> b.capacity > 50)
+                .collect(Collectors.toList());
+        long endStream = System.nanoTime();
+        long streamDuration = endStream - startStream;
+
+        // 2. Requirement: Print the execution duration
+        System.out.println("Loop Processing Time   : " + loopDuration + " ns");
+        System.out.println("Stream Processing Time : " + streamDuration + " ns");
+
+        double difference = (double) (streamDuration - loopDuration) / loopDuration * 100;
+        System.out.printf("Difference: Streams are %.2f%% slower/faster in this micro-benchmark.\n", difference);
     }
 }
