@@ -1,41 +1,50 @@
 import java.util.ArrayList;
 import java.util.List;
 
-class Bogie {
-    String name;
-    int capacity;
+class GoodsBogie {
+    String id;
+    String shape; // e.g., "Cylindrical", "Box", "Flatbed"
+    String cargo; // e.g., "Petroleum", "Grains", "Steel"
 
-    public Bogie(String name, int capacity) {
-        this.name = name;
-        this.capacity = capacity;
+    public GoodsBogie(String id, String shape, String cargo) {
+        this.id = id;
+        this.shape = shape;
+        this.cargo = cargo;
     }
 
-    public int getCapacity() { return capacity; }
+    @Override
+    public String toString() {
+        return String.format("[%s | %s | %s]", id, shape, cargo);
+    }
 }
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        System.out.println("--- UC10: Total Seating Capacity (Stream Reduction) ---");
+        System.out.println("--- UC12: Safety Compliance Check ---");
 
-        // 1. Requirement: Reuse/Create the list of Bogie objects
-        List<Bogie> train = new ArrayList<>();
-        train.add(new Bogie("Sleeper 1", 72));
-        train.add(new Bogie("Sleeper 2", 72));
-        train.add(new Bogie("AC Chair Car", 56));
-        train.add(new Bogie("First Class", 24));
-        train.add(new Bogie("General", 90));
+        // 1. Requirement: Create a collection of goods bogies
+        List<GoodsBogie> goodsTrain = new ArrayList<>();
+        goodsTrain.add(new GoodsBogie("G1", "Cylindrical", "Petroleum"));
+        goodsTrain.add(new GoodsBogie("G2", "Box", "Grains"));
+        goodsTrain.add(new GoodsBogie("G3", "Cylindrical", "Petroleum"));
+        // goodsTrain.add(new GoodsBogie("G4", "Cylindrical", "Explosives")); // Uncomment to test failure
 
-        // 2. Requirement: Create stream, map to capacity, and reduce to sum
-        // reduce(identity, accumulator) -> 0 is the starting total
-        int totalSeats = train.stream()
-                .map(Bogie::getCapacity)        // Extracts numeric values
-                .reduce(0, Integer::sum);       // Sums them all up
+        // 2. Requirement: Use stream() and allMatch() for validation
+        // 3. Requirement: Apply logic (Cylindrical -> only Petroleum allowed)
+        boolean isSafe = goodsTrain.stream().allMatch(bogie -> {
+            if (bogie.shape.equalsIgnoreCase("Cylindrical")) {
+                return bogie.cargo.equalsIgnoreCase("Petroleum");
+            }
+            return true; // Other shapes are considered safe for this check
+        });
 
-        // 3. Requirement: Display the total seating capacity
-        System.out.println("Total Bogies in Train: " + train.size());
-        System.out.println("Combined Seating Capacity: " + totalSeats + " passengers");
+        // 4. Requirement: Store result and display compliance status
+        System.out.println("Checking Train Formation: " + goodsTrain);
 
-        // Functional Analytics Tip:
-        // You can also use .mapToInt(Bogie::getCapacity).sum() for primitive efficiency!
+        if (isSafe) {
+            System.out.println("\nSTATUS: ✔ Safety Compliant. The train is cleared for departure.");
+        } else {
+            System.out.println("\nSTATUS: ✘ SAFETY VIOLATION! Illegal cargo detected in cylindrical bogie.");
+        }
     }
 }
