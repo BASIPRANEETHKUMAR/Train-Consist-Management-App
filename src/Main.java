@@ -1,37 +1,45 @@
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // UC1 & UC2 logic consolidated into UC3
-        System.out.println("--- Train Bogie Tracker (Unique IDs) ---");
+        System.out.println("--- UC4: Maintain Ordered Bogie IDs ---");
 
-        // Key Concept: Set Interface & HashSet Implementation
-        Set<String> bogieIds = new HashSet<>();
+        // Requirement: Create a LinkedList for the consist
+        LinkedList<String> consist = new LinkedList<>();
 
-        // Flow: User adds bogie IDs
-        addBogie(bogieIds, "B1");
-        addBogie(bogieIds, "A1");
-        addBogie(bogieIds, "B2");
+        // Requirement: Add initial bogies
+        // Using addLast() to ensure they follow the sequence: Engine -> Sleeper -> ...
+        consist.add("Engine");
+        consist.add("Sleeper");
+        consist.add("AC");
+        consist.add("Cargo");
+        consist.add("Guard");
 
-        // Flow: Duplicates are ignored
-        System.out.println("\nAttempting to add duplicate Bogie ID: B1...");
-        addBogie(bogieIds, "B1");
+        System.out.println("Initial Consist: " + consist);
 
-        // Flow: Unique IDs are displayed
-        System.out.println("\nFinal Unique Bogie List:");
-        System.out.println(bogieIds);
-        System.out.println("Total Unique Bogies: " + bogieIds.size());
+        // Requirement: Insert a Pantry Car at position 2 (Index 2)
+        // LinkedList makes this efficient by re-linking nodes
+        consist.add(2, "Pantry Car");
+        System.out.println("After Adding Pantry Car: " + consist);
+
+        // Requirement: Remove the first and last bogie
+        String removedFirst = consist.removeFirst();
+        String removedLast = consist.removeLast();
+
+        System.out.println("\nDetached Head: " + removedFirst);
+        System.out.println("Detached Tail: " + removedLast);
+
+        // Requirement: Display the final ordered train consist
+        System.out.println("\nFinal Ordered Train Consist:");
+        displayTrain(consist);
     }
 
-    /**
-     * Helper method to demonstrate 'add()' and 'Automatic Deduplication'
-     */
-    private static void addBogie(Set<String> set, String id) {
-        if (set.add(id)) {
-            System.out.println("Successfully added Bogie: " + id);
-        } else {
-            System.out.println("Rejected: Bogie ID " + id + " already exists!");
+    private static void displayTrain(LinkedList<String> list) {
+        System.out.print("TRACK: ");
+        for (int i = 0; i < list.size(); i++) {
+            System.out.print("[" + list.get(i) + "]");
+            if (i < list.size() - 1) System.out.print(" <-> ");
         }
+        System.out.println();
     }
 }
