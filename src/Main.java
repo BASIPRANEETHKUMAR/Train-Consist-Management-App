@@ -1,52 +1,41 @@
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
-// Requirement: Create a Bogie class with fields name and capacity
 class Bogie {
-    private String name;
-    private int capacity;
+    String name;
+    int capacity;
 
     public Bogie(String name, int capacity) {
         this.name = name;
         this.capacity = capacity;
     }
 
-    public String getName() { return name; }
     public int getCapacity() { return capacity; }
-
-    @Override
-    public String toString() {
-        return String.format("Bogie: %-15s | Capacity: %d seats", name, capacity);
-    }
 }
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        System.out.println("--- UC7: Sort Bogies by Capacity (Comparator) ---");
+        System.out.println("--- UC10: Total Seating Capacity (Stream Reduction) ---");
 
-        // Requirement: Create a List<Bogie> to store passenger bogies
-        List<Bogie> passengerBogies = new ArrayList<>();
+        // 1. Requirement: Reuse/Create the list of Bogie objects
+        List<Bogie> train = new ArrayList<>();
+        train.add(new Bogie("Sleeper 1", 72));
+        train.add(new Bogie("Sleeper 2", 72));
+        train.add(new Bogie("AC Chair Car", 56));
+        train.add(new Bogie("First Class", 24));
+        train.add(new Bogie("General", 90));
 
-        // Requirement: Add bogies with different capacities
-        passengerBogies.add(new Bogie("Sleeper", 72));
-        passengerBogies.add(new Bogie("AC Chair Car", 56));
-        passengerBogies.add(new Bogie("First Class", 24));
-        passengerBogies.add(new Bogie("General", 90));
+        // 2. Requirement: Create stream, map to capacity, and reduce to sum
+        // reduce(identity, accumulator) -> 0 is the starting total
+        int totalSeats = train.stream()
+                .map(Bogie::getCapacity)        // Extracts numeric values
+                .reduce(0, Integer::sum);       // Sums them all up
 
-        System.out.println("\nBefore Sorting (Insertion Order):");
-        passengerBogies.forEach(System.out::println);
+        // 3. Requirement: Display the total seating capacity
+        System.out.println("Total Bogies in Train: " + train.size());
+        System.out.println("Combined Seating Capacity: " + totalSeats + " passengers");
 
-        // Requirement: Use Comparator.comparingInt() to define sorting
-        // Lambda Expression used for concise comparison logic
-        passengerBogies.sort(Comparator.comparingInt(Bogie::getCapacity));
-
-        // Requirement: Sort the list and display the sorted bogies
-        System.out.println("\nAfter Sorting (By Capacity - Ascending):");
-        for (Bogie b : passengerBogies) {
-            System.out.println(b);
-        }
+        // Functional Analytics Tip:
+        // You can also use .mapToInt(Bogie::getCapacity).sum() for primitive efficiency!
     }
 }
-
-
