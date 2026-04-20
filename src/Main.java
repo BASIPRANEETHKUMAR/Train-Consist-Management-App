@@ -1,52 +1,47 @@
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-// Requirement: Create a Bogie class with fields name and capacity
 class Bogie {
-    private String name;
-    private int capacity;
+    String name;
+    int capacity;
 
     public Bogie(String name, int capacity) {
         this.name = name;
         this.capacity = capacity;
     }
 
-    public String getName() { return name; }
-    public int getCapacity() { return capacity; }
-
     @Override
     public String toString() {
-        return String.format("Bogie: %-15s | Capacity: %d seats", name, capacity);
+        return name + " (" + capacity + " seats)";
     }
 }
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        System.out.println("--- UC7: Sort Bogies by Capacity (Comparator) ---");
+        System.out.println("--- UC8: Filter Bogies Using Streams ---");
 
-        // Requirement: Create a List<Bogie> to store passenger bogies
-        List<Bogie> passengerBogies = new ArrayList<>();
+        // 1. Requirement: Reuse/Create the Bogie list
+        List<Bogie> bogies = new ArrayList<>();
+        bogies.add(new Bogie("Sleeper", 72));
+        bogies.add(new Bogie("AC Chair Car", 56));
+        bogies.add(new Bogie("First Class", 24));
+        bogies.add(new Bogie("General", 90));
 
-        // Requirement: Add bogies with different capacities
-        passengerBogies.add(new Bogie("Sleeper", 72));
-        passengerBogies.add(new Bogie("AC Chair Car", 56));
-        passengerBogies.add(new Bogie("First Class", 24));
-        passengerBogies.add(new Bogie("General", 90));
+        System.out.println("All Bogies: " + bogies);
 
-        System.out.println("\nBefore Sorting (Insertion Order):");
-        passengerBogies.forEach(System.out::println);
+        // 2. Requirement: Create a stream and apply filter (capacity > 60)
+        // 3. Requirement: Collect the result into a new list
+        List<Bogie> highCapacityBogies = bogies.stream()
+                .filter(b -> b.capacity > 60)
+                .collect(Collectors.toList());
 
-        // Requirement: Use Comparator.comparingInt() to define sorting
-        // Lambda Expression used for concise comparison logic
-        passengerBogies.sort(Comparator.comparingInt(Bogie::getCapacity));
-
-        // Requirement: Sort the list and display the sorted bogies
-        System.out.println("\nAfter Sorting (By Capacity - Ascending):");
-        for (Bogie b : passengerBogies) {
-            System.out.println(b);
+        // 4. Requirement: Display the filtered bogies
+        System.out.println("\n--- High Capacity Bogies ( > 60 seats ) ---");
+        if (highCapacityBogies.isEmpty()) {
+            System.out.println("No bogies match the criteria.");
+        } else {
+            highCapacityBogies.forEach(System.out::println);
         }
     }
 }
-
-
